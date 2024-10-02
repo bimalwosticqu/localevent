@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Event - Admin Dashboard</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+    <link rel="stylesheet" href="/css/styles.css"> <!-- Your custom styles -->
+</head>
+
+<body>
+
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <nav id="sidebar" class="col-md-3 col-lg-2 d-md-block bg-light sidebar">
+                <div class="sidebar-sticky">
+                    <h4 class="sidebar-heading">Admin Menu</h4>
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link" href="/">
+                                <i class="fas fa-tachometer-alt"></i> Dashboard
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" href="/events">
+                                <i class="fas fa-calendar-alt"></i> Events
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/news">
+                                <i class="fas fa-newspaper"></i> News
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+
+            <!-- Main Content -->
+            <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
+                <div
+                    class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2">Add New Event</h1>
+                </div>
+                <form id="addEventForm" action="/add-event" method="POST">
+                    <div class="form-group">
+                        <label for="eventTitle">Event Title</label>
+                        <input type="text" class="form-control" id="eventTitle" placeholder="Enter event title"
+                            required>
+                    </div>
+                    <div class="form-group">
+                        <label for="eventType">Event Type</label>
+                        <select class="form-control" id="eventType" required>
+                            <option value="" disabled selected>Select event type</option>
+                            <option value="Music">Music</option>
+                            <option value="Comedy">Comedy</option>
+                            <option value="Food & Drink">Food & Drink</option>
+                            <option value="Theater">Theater</option>
+                            <option value="Festival">Festival</option>
+                            <option value="Sports">Sports</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="eventDescription">Description</label>
+                        <textarea class="form-control" id="eventDescription" rows="3"
+                            placeholder="Enter event description" required></textarea>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label for="eventDate">Date</label>
+                            <input type="date" class="form-control" id="eventDate" required>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="eventTime">Time</label>
+                            <input type="time" class="form-control" id="eventTime" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="eventLocation">Location</label>
+                        <input type="text" class="form-control" id="eventLocation" placeholder="Enter event location"
+                            required>
+                    </div>
+                    <div class="form-group">
+                        <label for="eventPrice">Price</label>
+                        <input type="text" class="form-control" id="eventPrice" placeholder="Enter event price"
+                            required>
+                    </div>
+                    <div class="form-group">
+                        <label for="eventImage">Event Image URL</label>
+                        <input type="url" class="form-control" id="eventImage" placeholder="Enter image URL" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Add Event</button>
+                </form>
+            </main>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script> <!-- Full version of jQuery -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        // Add event form submission
+        $('#addEventForm').on('submit', function (e) {
+            e.preventDefault();  // Prevent the default form submission
+
+            // Prepare the event data from the form inputs
+            const eventData = {
+                title: $('#eventTitle').val(),
+                type: $('#eventType').val(),  // Capture event type
+                description: $('#eventDescription').val(),
+                date: $('#eventDate').val(),
+                time: $('#eventTime').val(),
+                location: $('#eventLocation').val(),
+                price: $('#eventPrice').val(),
+                image: $('#eventImage').val()
+            };
+
+            // Log the event data (for debugging purposes)
+            console.log('Event Data:', eventData);
+
+            // Send the event data to the server using AJAX
+            $.ajax({
+                url: '/add-event',  // The server endpoint to handle the event submission
+                method: 'POST',     // Use the POST method for submitting the data
+                contentType: 'application/json',  // Data type that is being sent
+                data: JSON.stringify(eventData),  // Convert the event data object to JSON
+                success: function (response) {
+                    // Handle successful response
+                    alert('Event added successfully!');
+                    window.location.href = '/events';  // Redirects to the event list page
+
+                    $('#addEventForm')[0].reset();  // Clear the form after successful submission
+                },
+                error: function (xhr, status, error) {
+                    // Handle error response
+                    console.error('Error saving event:', error);
+                    alert('Failed to save the event. Please try again.');
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

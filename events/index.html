@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Event Listings</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+    <link rel="stylesheet" href="/css/styles.css"> <!-- Your custom styles -->
+</head>
+
+<body>
+
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <nav id="sidebar" class="col-md-3 col-lg-2 d-md-block bg-light sidebar">
+                <div class="sidebar-sticky">
+                    <h4 class="sidebar-heading">Admin Menu</h4>
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link" href="/">
+                                <i class="fas fa-tachometer-alt"></i> Dashboard
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" href="/events">
+                                <i class="fas fa-calendar-alt"></i> Events
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/news">
+                                <i class="fas fa-newspaper"></i> News
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+
+            <!-- Main Content -->
+            <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
+                <div
+                    class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2">Events Listing</h1>
+                    <a href="events/create" class="btn btn-primary">Add Events</a>
+                </div>
+
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Title</th>
+                            <th scope="col">Description</th>
+                            <th scope="col">Date</th>
+                            <th scope="col">Image</th>
+                            <th scope="col">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="eventsTableBody">
+                        <!-- Events will be populated here -->
+                    </tbody>
+                </table>
+            </main>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            // Fetch events from the server
+            $.ajax({
+                url: '/getEvents?type=all',  // The server endpoint to fetch the events
+                method: 'GET',
+                success: function (response) {
+                    const events = response.data; // Assuming response.data contains the array of events
+
+                    // Populate the events table
+                    const eventsTableBody = $('#eventsTableBody');
+                    eventsTableBody.empty(); // Clear the existing content
+
+                    // Loop through each event and add a row to the table
+                    events.forEach((event, index) => {
+                        const eventRow = `
+                            <tr>
+                                <th scope="row">${index + 1}</th>
+                                <td>${event.eventName}</td>
+                                <td>${event.eventDescription}</td>
+                                <td>${event.eventDate}</td>
+                                <td><img src="${event.eventImage}" alt="${event.eventName}" width="100"></td>
+                                <td>
+                                    <button class="btn btn-sm btn-danger" onclick="deleteEvent('${event._id}')">Delete</button>
+                                </td>
+                            </tr>
+                        `;
+                        eventsTableBody.append(eventRow);
+                    });
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error fetching events:', error);
+                }
+            });
+        });
+
+        // Function to delete an event
+        function deleteEvent(eventId) {
+            if (confirm('Are you sure you want to delete this event?')) {
+                $.ajax({
+                    url: `/events/delete/${eventId}`,  // Server endpoint to handle event deletion
+                    method: 'DELETE',
+                    success: function () {
+                        alert('Event deleted successfully!');
+                        location.reload(); // Reload the page to update the event list
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('Error deleting event:', error);
+                        alert('Failed to delete the event.');
+                    }
+                });
+            }
+        }
+
+    </script>
+</body>
+
+</html>

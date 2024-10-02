@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Events Management</title>
+    <link rel="stylesheet" href="styles.css"> <!-- Your CSS file -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <h1>Create a New Event</h1>
+    <form id="eventForm">
+        <label for="title">Event Title:</label>
+        <input type="text" id="title" name="title" required>
+
+        <label for="date">Event Date:</label>
+        <input type="date" id="date" name="date" required>
+
+        <label for="location">Location:</label>
+        <input type="text" id="location" name="location" required>
+
+        <label for="image">Image URL:</label>
+        <input type="url" id="image" name="image" required>
+
+        <label for="price">Price:</label>
+        <input type="number" id="price" name="price" required>
+
+        <button type="submit">Create Event</button>
+    </form>
+
+    <h2>Events List</h2>
+    <div id="eventLists"></div>
+
+    <script>
+        // Handle form submission
+        $('#eventForm').on('submit', function(event) {
+            event.preventDefault(); // Prevent the default form submission
+            const eventData = $(this).serialize();
+            $.post('/api/events', eventData, function() {
+                // Clear form fields after submission
+                $('#eventForm')[0].reset();
+                alert("Successfully saved events");
+            });
+        });
+    </script>
+</body>
+</html>

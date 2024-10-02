@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - News Listings</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+    <link rel="stylesheet" href="/css/styles.css"> <!-- Your custom styles -->
+</head>
+
+<body>
+
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <nav id="sidebar" class="col-md-3 col-lg-2 d-md-block bg-light sidebar">
+                <div class="sidebar-sticky">
+                    <h4 class="sidebar-heading">Admin Menu</h4>
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link" href="/">
+                                <i class="fas fa-tachometer-alt"></i> Dashboard
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/events">
+                                <i class="fas fa-calendar-alt"></i> Events
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" href="/news">
+                                <i class="fas fa-newspaper"></i> News
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+
+            <!-- Main Content -->
+            <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
+                <div
+                    class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2">News Listing</h1>
+                    <a href="/news/create" class="btn btn-primary">Add News</a>
+                </div>
+
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Title</th>
+                            <th scope="col">Description</th>
+                            <th scope="col">Date</th>
+                            <th scope="col">Image</th>
+                            <th scope="col">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="newsTableBody">
+                        <!-- News articles will be populated here -->
+                    </tbody>
+                </table>
+            </main>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script>
+        // Function to populate news listing
+        function loadNews() {
+            $.ajax({
+                url: '/getNews', // Ensure this endpoint returns the list of news articles
+                method: 'GET',
+                success: function (response) {
+                    const newsData = response.data; // Assuming the response is in the form {data: [...]}
+                    const newsTableBody = $('#newsTableBody');
+
+                    // Clear existing content in the table body
+                    newsTableBody.empty();
+
+                    // Loop through the newsData array and create table rows
+                    newsData.forEach((newsItem, index) => {
+                        const newsRow = `
+                            <tr>
+                                <th scope="row">${index + 1}</th>
+                                <td>${newsItem.newsTitle}</td>
+                                <td>${newsItem.newsContent}</td>
+                                <td>${newsItem.newsDate}</td>
+                                <td><img src="${newsItem.newsImage}" alt="News Image" style="width: 100px;"></td>
+                                <td>
+                                <button class="btn btn-sm btn-danger" onclick="deleteNews('${newsItem._id}')">Delete</button>
+                                </td>
+
+                            </tr>
+                        `;
+                        newsTableBody.append(newsRow);
+                    });
+                },
+                error: function (error) {
+                    console.error('Error fetching news:', error);
+                }
+            });
+        }
+
+        // Load news when the page is ready
+        $(document).ready(function () {
+            loadNews();
+        });
+
+
+        // Function to delete a news item
+        function deleteNews(newsId) {
+            if (confirm('Are you sure you want to delete this news item?')) {
+                $.ajax({
+                    url: `/news/delete/${newsId}`,  // Server endpoint to handle news deletion
+                    method: 'DELETE',
+                    success: function () {
+                        alert('News deleted successfully!');
+                        location.reload(); // Reload the page to update the news list
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('Error deleting news:', error);
+                        alert('Failed to delete the news.');
+                    }
+                });
+            }
+        }
+
+    </script>
+</body>
+
+</html>

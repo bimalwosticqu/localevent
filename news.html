@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>News Management</title>
+    <link rel="stylesheet" href="styles.css"> <!-- Your CSS file -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <h1>Create a New News Article</h1>
+    <form id="newsForm">
+        <label for="title">News Title:</label>
+        <input type="text" id="title" name="title" required>
+
+        <label for="content">Content:</label>
+        <textarea id="content" name="content" required></textarea>
+
+        <label for="date">Date:</label>
+        <input type="date" id="date" name="date" required>
+
+        <button type="submit">Create News</button>
+    </form>
+
+    <h2>News List</h2>
+    <div id="newsLists"></div>
+
+    <script>
+        // Handle form submission
+        $('#newsForm').on('submit', function(event) {
+            event.preventDefault(); // Prevent the default form submission
+            const newsData = $(this).serialize();
+            $.post('/api/news', newsData, function() {
+                // Clear form fields after submission
+                $('#newsForm')[0].reset();
+                alert("Successfully saved events");
+            });
+        });
+    </script>
+</body>
+</html>

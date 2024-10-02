@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add News - Admin Dashboard</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+    <link rel="stylesheet" href="/css/styles.css"> <!-- Your custom styles -->
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <nav id="sidebar" class="col-md-3 col-lg-2 d-md-block bg-light sidebar">
+                <div class="sidebar-sticky">
+                    <h4 class="sidebar-heading">Admin Menu</h4>
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link" href="/">
+                                <i class="fas fa-tachometer-alt"></i> Dashboard
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link " href="/events">
+                                <i class="fas fa-calendar-alt"></i> Events
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" href="/news">
+                                <i class="fas fa-newspaper"></i> News
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+
+            <!-- Main Content -->
+            <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
+                <div
+                    class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2">Add News Article</h1>
+                </div>
+                <form id="addNewsForm" action="/add-news" method="POST">
+                    <div class="form-group">
+                        <label for="newsTitle">News Title</label>
+                        <input type="text" class="form-control" id="newsTitle" name="title"
+                            placeholder="Enter news title" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="newsDescription">Description</label>
+                        <textarea class="form-control" id="newsDescription" name="description" rows="5"
+                            placeholder="Enter news description" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="newsDate">Date</label>
+                        <input type="date" class="form-control" id="newsDate" name="date" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="newsImage">Image URL</label>
+                        <input type="url" class="form-control" id="newsImage" name="image" placeholder="Enter image URL"
+                            required>
+                    </div>
+                    <div class="form-group">
+                        <label for="newsStatus">News Status</label>
+                        <select class="form-control" id="newsStatus" name="status" required>
+                            <option value="Draft" selected>Draft</option>
+                            <option value="Published">Published</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Add News</button>
+                </form>
+
+            </main>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script> <!-- Full version of jQuery -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        $('#addNewsForm').on('submit', function (e) {
+            e.preventDefault();  // Prevent the form from submitting the traditional way
+
+            // Capture form data
+            const newsData = {
+                title: $('#newsTitle').val(),
+                description: $('#newsDescription').val(),
+                date: $('#newsDate').val(),
+                image: $('#newsImage').val(),
+                status: $('#newsStatus').val()
+            };
+
+            // Send data to the server via AJAX
+            $.ajax({
+                url: '/add-news',
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(newsData),
+                success: function (response) {
+                    // Display success notification
+                    $('#notification').html('<div class="alert alert-success">News added successfully!</div>');
+                    // Clear the form after successful submission
+                    $('#addNewsForm')[0].reset();
+                    window.location.href = '/news';  // Redirect to the news listing page
+                },
+                error: function (error) {
+                    // Display error notification
+                    $('#notification').html('<div class="alert alert-danger">Error adding news: ' + error.responseText + '</div>');
+                }
+            });
+        });
+
+
+    </script>
+</body>
+
+</html>
