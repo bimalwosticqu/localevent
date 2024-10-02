@@ -111,12 +111,12 @@ app.post('/checkEmail', (req, res) => {
 app.post('/verifyUser', (req, res) => {
 	console.log("POST request received for logging in: " + JSON.stringify(req.body) + "\n");
 	loginData = req.body;
-	userCollection.find({ email: loginData.email, password: loginData.password }, { projection: { _id: 0 } }).toArray(function (err, docs) {
+	userCollection.findOne({ email: loginData.email, password: loginData.password }, (err, docs) => {
 		if (err) {
 			console.log("Some error.. " + err + "\n");
 			res.send(err);
 		} else {
-			if (docs[0].email === 'admin@event.com' && docs[0].password === 'admin') {
+			if (docs && docs.email === 'admin@event.com' && docs.password === 'admin') {
 				isAuthenticated = true; // Set the global variable to true when logged in
 				console.log(JSON.stringify(docs) + " have been retrieved.\n");
 				res.status(200).send(docs);
@@ -237,14 +237,14 @@ app.post('/add-event', (req, res) => {
 			};
 
 			notificationCollection.insertOne(notificationData).then(() => {
-                console.log('Notification created successfully!');
-            })
-            .catch(error => {
-                console.error('Error creating notification:', error);
-            });
+				console.log('Notification created successfully!');
+			})
+				.catch(error => {
+					console.error('Error creating notification:', error);
+				});
 
 			// Call the notifications API to save the notification
-			
+
 			res.status(201).send('Event added successfully!');
 		})
 		.catch(err => {
@@ -282,11 +282,11 @@ app.post('/add-news', (req, res) => {
 			};
 
 			notificationCollection.insertOne(notificationData).then(() => {
-                console.log('Notification created successfully!');
-            })
-            .catch(error => {
-                console.error('Error creating notification:', error);
-            });;
+				console.log('Notification created successfully!');
+			})
+				.catch(error => {
+					console.error('Error creating notification:', error);
+				});;
 
 			res.status(201).send('News added successfully!');
 		})
